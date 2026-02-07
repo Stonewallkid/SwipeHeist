@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import html2canvas from "html2canvas";
 import "./App.css";
 
 const CARD_SHARE = 0.72;
@@ -246,6 +247,23 @@ export default function App() {
   ];
 
   const [quickLoading, setQuickLoading] = useState(null);
+  const resultsRef = useRef(null);
+
+  const downloadImage = async () => {
+    if (!resultsRef.current) return;
+    try {
+      const canvas = await html2canvas(resultsRef.current, {
+        backgroundColor: '#0a0710',
+        scale: 2,
+      });
+      const link = document.createElement('a');
+      link.download = `swipeheist-${towns.map(t => t.name.toLowerCase()).join('-')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('Failed to capture image:', err);
+    }
+  };
 
   const quickAdd = async (townName, townState) => {
     if (towns.find(t => t.name.toLowerCase() === townName.toLowerCase() && t.state === townState)) return;
@@ -418,31 +436,39 @@ export default function App() {
           </div>
         </div>
 
-        {/* Aggregate totals */}
-        {towns.length > 1 && (
-          <div className="aggregate">
-            <div className="aggregate-left">
-              <div className="aggregate-label">
-                {towns.length} towns · {totalPop.toLocaleString()} people · Leaving daily
+        {/* Results section for screenshot */}
+        <div ref={resultsRef} className="results-capture">
+          {/* Aggregate totals */}
+          {towns.length > 1 && (
+            <div className="aggregate">
+              <div className="aggregate-left">
+                <div className="aggregate-label">
+                  {towns.length} towns · {totalPop.toLocaleString()} people · Leaving daily
+                </div>
+                <div className="aggregate-daily">
+                  <AnimatedNumber value={totalDaily} />
+                </div>
               </div>
-              <div className="aggregate-daily">
-                <AnimatedNumber value={totalDaily} />
+              <div className="aggregate-right">
+                <div className="aggregate-label">Yearly drain</div>
+                <div className="aggregate-yearly">
+                  <AnimatedNumber value={totalYearly} />
+                </div>
               </div>
             </div>
-            <div className="aggregate-right">
-              <div className="aggregate-label">Yearly drain</div>
-              <div className="aggregate-yearly">
-                <AnimatedNumber value={totalYearly} />
-              </div>
-            </div>
-          </div>
-        )}
+          )}
 
-        {/* Town cards */}
-        <div className="cards-grid">
-          {towns.map(town => (
-            <TownCard key={town.id} town={town} onRemove={() => removeTown(town.id)} />
-          ))}
+          {/* Town cards */}
+          <div className="cards-grid">
+            {towns.map(town => (
+              <TownCard key={town.id} town={town} onRemove={() => removeTown(town.id)} />
+            ))}
+          </div>
+
+          {/* Watermark for shared images */}
+          {towns.length > 0 && (
+            <div className="watermark">swipeheist.com</div>
+          )}
         </div>
 
         {towns.length === 0 && (
@@ -536,7 +562,14 @@ export default function App() {
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
               </button>
             </div>
-            <p className="share-note">Instagram doesn't support direct sharing — screenshot and post!</p>
+            <button
+              className="download-btn"
+              onClick={downloadImage}
+            >
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              Download Image
+            </button>
+            <p className="share-note">Download and share on Instagram, or anywhere else!</p>
           </div>
         )}
 

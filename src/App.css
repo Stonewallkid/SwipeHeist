@@ -781,6 +781,48 @@ body {
   font-style: italic;
 }
 
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px auto 0;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #dc3232, #a01020);
+  color: #f0e8e0;
+  border: none;
+  border-radius: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.download-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.download-btn:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 20px rgba(220,50,50,0.4);
+}
+
+/* Results capture area */
+.results-capture {
+  position: relative;
+  padding-bottom: 20px;
+}
+
+.watermark {
+  text-align: center;
+  margin-top: 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: rgba(220,50,50,0.6);
+  letter-spacing: 0.1em;
+}
+
 /* Why Section */
 .why-section {
   margin-top: 64px;
