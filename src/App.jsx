@@ -153,7 +153,7 @@ function TownCard({ town, onRemove }) {
 
 export default function App() {
   const [towns, setTowns] = useState([]);
-  const [stateAbbr, setStateAbbr] = useState("AR");
+  const [stateAbbr, setStateAbbr] = useState("CA");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -235,17 +235,49 @@ export default function App() {
   const totalYearly = totalDaily * 365;
   const totalPop = towns.reduce((sum, t) => sum + t.population, 0);
 
-  // NWA quick-add towns
+  // Famous small towns for quick-add
   const QUICK_TOWNS = [
-    "Bentonville", "Rogers", "Fayetteville", "Springdale", "Siloam Springs", "Bella Vista"
+    { name: "Sedona", state: "AZ" },
+    { name: "Aspen", state: "CO" },
+    { name: "Key West", state: "FL" },
+    { name: "Savannah", state: "GA" },
+    { name: "Nantucket", state: "MA" },
+    { name: "Carmel-by-the-Sea", state: "CA" },
   ];
 
-  const quickAdd = (name) => {
-    const place = statePlaces.find(p =>
-      p.name.toLowerCase() === name.toLowerCase()
-    );
-    if (place) {
-      addTown(place);
+  const [quickLoading, setQuickLoading] = useState(null);
+
+  const quickAdd = async (townName, townState) => {
+    if (towns.find(t => t.name.toLowerCase() === townName.toLowerCase() && t.state === townState)) return;
+    setQuickLoading(townName);
+    try {
+      const fips = STATE_FIPS[townState];
+      const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E&for=place:*&in=state:${fips}`;
+      const response = await fetch(url);
+      const data = await response.json();
+      const [, ...rows] = data;
+      const places = rows.map(([name, pop, income]) => ({
+        fullName: name,
+        name: name.split(",")[0].replace(/ (city|town|CDP|village|borough)$/i, "").trim(),
+        population: parseInt(pop) || 0,
+        medianIncome: parseInt(income) > 0 ? parseInt(income) : null,
+      })).filter(p => p.population > 0);
+
+      const place = places.find(p => p.name.toLowerCase() === townName.toLowerCase());
+      if (place) {
+        setTowns(prev => [...prev, {
+          name: place.name,
+          state: townState,
+          population: place.population,
+          medianIncome: place.medianIncome,
+          manual: false,
+          id: Date.now(),
+        }]);
+      }
+    } catch (err) {
+      console.error("Quick add failed:", err);
+    } finally {
+      setQuickLoading(null);
     }
   };
 
@@ -364,27 +396,26 @@ export default function App() {
             </div>
           )}
 
-          {/* Quick adds for NWA (only show when AR selected) */}
-          {stateAbbr === "AR" && statePlaces.length > 0 && (
-            <div className="quick-add">
-              <span className="quick-label">Quick add NWA:</span>
-              <div className="quick-buttons">
-                {QUICK_TOWNS.map(name => {
-                  const added = towns.find(t => t.name.toLowerCase() === name.toLowerCase() && t.state === "AR");
-                  return (
-                    <button
-                      key={name}
-                      onClick={() => quickAdd(name)}
-                      disabled={!!added}
-                      className={`quick-btn ${added ? "added" : ""}`}
-                    >
-                      {name}
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Quick adds for famous small towns */}
+          <div className="quick-add">
+            <span className="quick-label">Try these towns:</span>
+            <div className="quick-buttons">
+              {QUICK_TOWNS.map(({ name, state }) => {
+                const added = towns.find(t => t.name.toLowerCase() === name.toLowerCase() && t.state === state);
+                const isLoading = quickLoading === name;
+                return (
+                  <button
+                    key={name}
+                    onClick={() => quickAdd(name, state)}
+                    disabled={!!added || isLoading}
+                    className={`quick-btn ${added ? "added" : ""}`}
+                  >
+                    {isLoading ? "..." : `${name}, ${state}`}
+                  </button>
+                );
+              })}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Aggregate totals */}
@@ -510,17 +541,38 @@ export default function App() {
               except helping people understand where their money actually goes.
             </p>
             <p className="support-text">
-              If this opened your eyes, consider buying me a coffee. Every dollar goes toward
+              If this opened your eyes, consider throwing a few bucks my way. Every dollar goes toward
               keeping this site running and building more tools to help communities fight back.
             </p>
-            <a
-              href="https://buymeacoffee.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="coffee-button"
-            >
-              Buy me a coffee ☕
-            </a>
+            <div className="support-buttons">
+              <a
+                href="https://paypal.me/YOURUSERNAME"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="support-button paypal"
+              >
+                PayPal
+              </a>
+              <button
+                className="support-button crypto"
+                onClick={() => {
+                  navigator.clipboard.writeText("YOUR_ETH_WALLET_ADDRESS");
+                  alert("ETH address copied!");
+                }}
+              >
+                ETH
+              </button>
+              <button
+                className="support-button crypto"
+                onClick={() => {
+                  navigator.clipboard.writeText("YOUR_SOL_WALLET_ADDRESS");
+                  alert("SOL address copied!");
+                }}
+              >
+                SOL
+              </button>
+            </div>
+            <p className="wallet-note">Click ETH or SOL to copy wallet address</p>
           </div>
         </div>
       </div>
