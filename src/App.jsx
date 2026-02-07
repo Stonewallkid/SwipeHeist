@@ -546,7 +546,7 @@ export default function App() {
             </p>
             <div className="support-buttons">
               <a
-                href="https://paypal.me/YOURUSERNAME"
+                href="https://paypal.me/ZPXNB3MNMGSWC"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="support-button paypal"
