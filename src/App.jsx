@@ -545,14 +545,6 @@ export default function App() {
               keeping this site running and building more tools to help communities fight back.
             </p>
             <div className="support-buttons">
-              <a
-                href="https://paypal.me/ZPXNB3MNMGSWC"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="support-button paypal"
-              >
-                PayPal
-              </a>
               <button
                 className="support-button crypto"
                 onClick={() => {
@@ -560,10 +552,10 @@ export default function App() {
                   alert("ETH address copied to clipboard!");
                 }}
               >
-                ETH
+                Send ETH
               </button>
             </div>
-            <p className="wallet-note">Click ETH to copy wallet address</p>
+            <p className="wallet-note">Click to copy wallet address</p>
           </div>
         </div>
       </div>
