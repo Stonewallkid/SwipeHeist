@@ -673,6 +673,76 @@ body {
   background: rgba(220,50,50,0.3);
 }
 
+/* Share Section */
+.share-section {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.share-label {
+  font-size: 14px;
+  color: rgba(220,180,160,0.7);
+  margin-bottom: 16px;
+}
+
+.share-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+  color: #fff;
+}
+
+.share-btn:hover {
+  transform: scale(1.03);
+}
+
+.share-btn.twitter {
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.share-btn.twitter:hover {
+  box-shadow: 0 4px 16px rgba(255,255,255,0.15);
+}
+
+.share-btn.facebook {
+  background: #1877f2;
+}
+
+.share-btn.facebook:hover {
+  box-shadow: 0 4px 16px rgba(24,119,242,0.4);
+}
+
+.share-btn.linkedin {
+  background: #0a66c2;
+}
+
+.share-btn.linkedin:hover {
+  box-shadow: 0 4px 16px rgba(10,102,194,0.4);
+}
+
+.share-btn.copy {
+  background: rgba(220,180,160,0.15);
+  color: rgba(220,180,160,0.9);
+  border: 1px solid rgba(220,180,160,0.3);
+}
+
+.share-btn.copy:hover {
+  box-shadow: 0 4px 16px rgba(220,180,160,0.2);
+}
+
 /* Why Section */
 .why-section {
   margin-top: 64px;

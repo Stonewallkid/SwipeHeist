@@ -453,6 +453,51 @@ export default function App() {
           </div>
         )}
 
+        {/* Social Share */}
+        {towns.length > 0 && (
+          <div className="share-section">
+            <p className="share-label">Share this with your community:</p>
+            <div className="share-buttons">
+              <button
+                className="share-btn twitter"
+                onClick={() => {
+                  const text = towns.length === 1
+                    ? `${towns[0].name}, ${towns[0].state} loses $${Math.round(dailyCalc(towns[0]) * 365).toLocaleString()}/year to credit card processors. See how much YOUR town loses:`
+                    : `These ${towns.length} towns lose $${Math.round(totalYearly).toLocaleString()}/year to credit card processors. See how much YOUR town loses:`;
+                  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent('https://swipeheist.com')}`, '_blank');
+                }}
+              >
+                𝕏 / Twitter
+              </button>
+              <button
+                className="share-btn facebook"
+                onClick={() => {
+                  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://swipeheist.com')}`, '_blank');
+                }}
+              >
+                Facebook
+              </button>
+              <button
+                className="share-btn linkedin"
+                onClick={() => {
+                  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent('https://swipeheist.com')}`, '_blank');
+                }}
+              >
+                LinkedIn
+              </button>
+              <button
+                className="share-btn copy"
+                onClick={() => {
+                  navigator.clipboard.writeText('https://swipeheist.com');
+                  alert('Link copied!');
+                }}
+              >
+                Copy Link
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Methodology */}
         <div className="methodology">
           <div className="methodology-title">Data Sources & Methodology</div>
