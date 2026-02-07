@@ -573,24 +573,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Methodology */}
-        <div className="methodology">
-          <div className="methodology-title">Data Sources & Methodology</div>
-          <p>
-            Population and median household income sourced from <strong>U.S. Census Bureau American Community Survey (ACS) 2022</strong>.
-            Per-capita spending derived from local income using BLS Consumer Expenditure Survey ratios
-            ({(NATIONAL_SPENDING_RATIO * 100).toFixed(0)}% of pre-tax income, {AVG_HOUSEHOLD_SIZE} persons/household avg).
-            Card share of {(CARD_SHARE * 100).toFixed(0)}% from the Federal Reserve Payments Study.
-            Blended processing fee of {(AVG_PROCESSING_FEE_PERCENT * 100).toFixed(2)}% + ${AVG_PROCESSING_FEE_FIXED.toFixed(2)}/txn based on modern processors (Square, Toast, Stripe).
-            These are community-wide estimates — actual figures vary by local economy and processor contracts.
-          </p>
-          <p className="disclaimer">
-            <strong>Disclaimer:</strong> Terms like "heist" and "robbed" are used hyperbolically to illustrate the economic
-            impact of processing fees on local communities. Credit card processing is a legal business practice.
-            This site aims to raise awareness about where consumer dollars go — not to accuse any company of criminal activity.
-          </p>
-        </div>
-
         {/* Why This Matters */}
         <div className="why-section">
           <h2 className="why-title">Why This Matters</h2>
@@ -677,6 +659,24 @@ export default function App() {
             </div>
             <p className="wallet-note">Click to copy wallet address</p>
           </div>
+        </div>
+
+        {/* Methodology */}
+        <div className="methodology">
+          <div className="methodology-title">Data Sources & Methodology</div>
+          <p>
+            Population and median household income sourced from <strong>U.S. Census Bureau American Community Survey (ACS) 2022</strong>.
+            Per-capita spending derived from local income using BLS Consumer Expenditure Survey ratios
+            ({(NATIONAL_SPENDING_RATIO * 100).toFixed(0)}% of pre-tax income, {AVG_HOUSEHOLD_SIZE} persons/household avg).
+            Card share of {(CARD_SHARE * 100).toFixed(0)}% from the Federal Reserve Payments Study.
+            Blended processing fee of {(AVG_PROCESSING_FEE_PERCENT * 100).toFixed(2)}% + ${AVG_PROCESSING_FEE_FIXED.toFixed(2)}/txn based on modern processors (Square, Toast, Stripe).
+            These are community-wide estimates — actual figures vary by local economy and processor contracts.
+          </p>
+          <p className="disclaimer">
+            <strong>Disclaimer:</strong> Terms like "heist" and "robbed" are used hyperbolically to illustrate the economic
+            impact of processing fees on local communities. Credit card processing is a legal business practice.
+            This site aims to raise awareness about where consumer dollars go — not to accuse any company of criminal activity.
+          </p>
         </div>
       </div>
     </div>
