@@ -556,23 +556,14 @@ export default function App() {
               <button
                 className="support-button crypto"
                 onClick={() => {
-                  navigator.clipboard.writeText("YOUR_ETH_WALLET_ADDRESS");
-                  alert("ETH address copied!");
+                  navigator.clipboard.writeText("0xA9dDf7941DB057c77D6F1A8D7f7865Da84779EAf");
+                  alert("ETH address copied to clipboard!");
                 }}
               >
                 ETH
               </button>
-              <button
-                className="support-button crypto"
-                onClick={() => {
-                  navigator.clipboard.writeText("YOUR_SOL_WALLET_ADDRESS");
-                  alert("SOL address copied!");
-                }}
-              >
-                SOL
-              </button>
             </div>
-            <p className="wallet-note">Click ETH or SOL to copy wallet address</p>
+            <p className="wallet-note">Click ETH to copy wallet address</p>
           </div>
         </div>
       </div>
