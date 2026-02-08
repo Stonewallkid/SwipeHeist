@@ -148,6 +148,21 @@ function TownCard({ town, onRemove }) {
           {formatFullMoney(yearly / town.population)}/person/yr in fees
         </span>
       </div>
+
+      <div className="impact-section">
+        <div className="impact-title">Imagine what {formatFullMoney(yearly)} could do for {town.name}:</div>
+        <div className="impact-list">
+          {yearly >= 5000000 && (
+            <span className="impact-item">{Math.floor(yearly / 5000000)} high school stadium{Math.floor(yearly / 5000000) > 1 ? 's' : ''}</span>
+          )}
+          <span className="impact-item">{Math.floor(yearly / 60000)} teacher salaries</span>
+          <span className="impact-item">{Math.floor(yearly / 100000)} school buses</span>
+          <span className="impact-item">{Math.floor(yearly / 1000000)} miles of road repair</span>
+          {yearly >= 500000 && (
+            <span className="impact-item">{Math.floor(yearly / 500000)} fire trucks</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
