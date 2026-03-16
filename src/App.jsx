@@ -167,6 +167,32 @@ function TownCard({ town, onRemove }) {
   );
 }
 
+// Log a search to the backend
+async function logSearch(town, state) {
+  try {
+    await fetch('/api/log-search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ town, state })
+    });
+  } catch (err) {
+    // Silently fail - don't break the app if logging fails
+    console.error('Failed to log search:', err);
+  }
+}
+
+// Fetch search count from backend
+async function fetchSearchCount() {
+  try {
+    const res = await fetch('/api/search-count');
+    const data = await res.json();
+    return data.count || 0;
+  } catch (err) {
+    console.error('Failed to fetch search count:', err);
+    return null;
+  }
+}
+
 export default function App() {
   const [towns, setTowns] = useState([]);
   const [stateAbbr, setStateAbbr] = useState("CA");
@@ -179,6 +205,12 @@ export default function App() {
   const [manualName, setManualName] = useState("");
   const [manualPop, setManualPop] = useState("");
   const [manualIncome, setManualIncome] = useState("");
+  const [searchCount, setSearchCount] = useState(null);
+
+  // Fetch search count on mount
+  useEffect(() => {
+    fetchSearchCount().then(count => setSearchCount(count));
+  }, []);
 
   // Load places when state changes
   useEffect(() => {
@@ -221,12 +253,17 @@ export default function App() {
     }]);
     setSearchTerm("");
     setError("");
+    // Log the search and update count
+    logSearch(place.name, stateAbbr).then(() => {
+      setSearchCount(prev => (prev !== null ? prev + 1 : 1));
+    });
   };
 
   const addManualTown = () => {
     if (!manualName.trim() || !manualPop) return;
+    const townName = manualName.trim();
     setTowns(prev => [...prev, {
-      name: manualName.trim(),
+      name: townName,
       state: stateAbbr,
       population: parseInt(manualPop),
       medianIncome: manualIncome ? parseInt(manualIncome) : null,
@@ -238,6 +275,10 @@ export default function App() {
     setManualIncome("");
     setShowManual(false);
     setError("");
+    // Log the search and update count
+    logSearch(townName, stateAbbr).then(() => {
+      setSearchCount(prev => (prev !== null ? prev + 1 : 1));
+    });
   };
 
   const removeTown = (id) => setTowns(prev => prev.filter(t => t.id !== id));
@@ -306,6 +347,10 @@ export default function App() {
           manual: false,
           id: Date.now(),
         }]);
+        // Log the search and update count
+        logSearch(place.name, townState).then(() => {
+          setSearchCount(prev => (prev !== null ? prev + 1 : 1));
+        });
       }
     } catch (err) {
       console.error("Quick add failed:", err);
@@ -328,6 +373,12 @@ export default function App() {
             Every card swipe sends a cut to Visa, Mastercard, and payment processors.
             See what your community actually pays — powered by real Census data.
           </p>
+          {searchCount !== null && (
+            <div className="search-counter">
+              <span className="counter-number">{searchCount.toLocaleString()}</span>
+              <span className="counter-label">towns searched in the last 30 days</span>
+            </div>
+          )}
         </div>
 
         {/* Search */}

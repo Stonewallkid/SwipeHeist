@@ -65,6 +65,32 @@ body {
   font-weight: 300;
 }
 
+/* Search Counter */
+.search-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 12px 20px;
+  background: rgba(220,50,50,0.1);
+  border: 1px solid rgba(220,50,50,0.25);
+  border-radius: 100px;
+  animation: fadeIn 1s ease-out 0.3s backwards;
+}
+
+.counter-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 20px;
+  font-weight: 500;
+  color: #dc3232;
+}
+
+.counter-label {
+  font-size: 13px;
+  color: rgba(230,200,180,0.8);
+  font-weight: 400;
+}
+
 /* Search Panel */
 .search-panel {
   background: rgba(15,12,20,0.7);

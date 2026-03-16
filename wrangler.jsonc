@@ -1,7 +1,16 @@
 {
   "name": "swipeheist",
+  "main": "src/worker.js",
   "compatibility_date": "2026-02-07",
   "assets": {
-    "directory": "./dist"
-  }
+    "directory": "./dist",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "swipeheist-stats",
+      "database_id": "a787663e-d7df-4a50-a249-b99b2ed84ca9"
+    }
+  ]
 }
