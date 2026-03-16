@@ -6,6 +6,9 @@ export default {
     // Handle API routes
     if (url.pathname === '/api/search-count' && request.method === 'GET') {
       try {
+        // Historical searches before counter was added
+        const HISTORICAL_OFFSET = 11343;
+
         const result = await env.DB.prepare(`
           SELECT COUNT(*) as count
           FROM searches
@@ -13,7 +16,7 @@ export default {
         `).first();
 
         return new Response(JSON.stringify({
-          count: result?.count || 0,
+          count: (result?.count || 0) + HISTORICAL_OFFSET,
           period: '30 days'
         }), {
           headers: {
