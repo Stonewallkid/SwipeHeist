@@ -52,29 +52,25 @@ function getDailySpend(medianIncome) {
   return (medianIncome * NATIONAL_SPENDING_RATIO) / AVG_HOUSEHOLD_SIZE / 365;
 }
 
-// Fetch all places in a state from Census API
+// Fetch all places in a state.
+//
+// This goes through our own Worker (/api/places), not api.census.gov directly.
+// The Census API now requires a key on every data query, and a keyless request
+// 302s to a page that carries no CORS header — which the browser reports as a
+// CORS error. The Worker holds the key and returns the rows already shaped.
 async function fetchStatePlaces(stateAbbr) {
-  const fips = STATE_FIPS[stateAbbr];
-  if (!fips) throw new Error("Invalid state");
+  if (!STATE_FIPS[stateAbbr]) throw new Error("Invalid state");
 
-  const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E&for=place:*&in=state:${fips}`;
-  const response = await fetch(url);
+  const response = await fetch(`/api/places?state=${encodeURIComponent(stateAbbr)}`);
+  const data = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(`Census API error: ${response.status}`);
+    // The Worker splits these: `error` is safe to show, `detail` says why.
+    if (data?.detail) console.warn('/api/places:', data.detail);
+    throw new Error(data?.error || `Places lookup failed: ${response.status}`);
   }
 
-  const data = await response.json();
-  // First row is headers: ["NAME","B01003_001E","B19013_001E","state","place"]
-  const [, ...rows] = data;
-
-  return rows.map(([name, pop, income]) => ({
-    fullName: name,
-    // Extract just the city name (before the comma or state reference)
-    name: name.split(",")[0].replace(/ (city|town|CDP|village|borough)$/i, "").trim(),
-    population: parseInt(pop) || 0,
-    medianIncome: parseInt(income) > 0 ? parseInt(income) : null,
-  })).filter(p => p.population > 0);
+  return data.places;
 }
 
 function TownCard({ town, onRemove }) {
@@ -325,18 +321,7 @@ export default function App() {
     if (towns.find(t => t.name.toLowerCase() === townName.toLowerCase() && t.state === townState)) return;
     setQuickLoading(townName);
     try {
-      const fips = STATE_FIPS[townState];
-      const url = `https://api.census.gov/data/2022/acs/acs5?get=NAME,B01003_001E,B19013_001E&for=place:*&in=state:${fips}`;
-      const response = await fetch(url);
-      const data = await response.json();
-      const [, ...rows] = data;
-      const places = rows.map(([name, pop, income]) => ({
-        fullName: name,
-        name: name.split(",")[0].replace(/ (city|town|CDP|village|borough)$/i, "").trim(),
-        population: parseInt(pop) || 0,
-        medianIncome: parseInt(income) > 0 ? parseInt(income) : null,
-      })).filter(p => p.population > 0);
-
+      const places = await fetchStatePlaces(townState);
       const place = places.find(p => p.name.toLowerCase() === townName.toLowerCase());
       if (place) {
         setTowns(prev => [...prev, {
